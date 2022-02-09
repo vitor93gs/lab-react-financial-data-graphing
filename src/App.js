@@ -1,24 +1,35 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios"
+import { useEffect } from "react";
+import { useState } from "react";
+import { LineChart } from "./LineChart";
 
 function App() {
+
+  const [objInfoMoedas, setObj] = useState([]);
+
+  useEffect(() => {
+  async function get(){
+    // A sintaxe try/catch separa um bloco de codigo para ser testado, se ocorrer tudo bem, ele segue no try, se ocorrer algum erro, cai no catch
+    try {
+      const objetoJson = await axios.get("http://api.coindesk.com/v1/bpi/historical/close.json");        
+      setObj(objetoJson.data.bpi);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+  // Invocando a função que criei dentro da callback do useEffect
+  get();
+  }, []);
+
+
+  
+  if(objInfoMoedas!==[]){
+    console.log(objInfoMoedas)
+  } 
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+    <LineChart lbls={objInfoMoedas}/>
+    </>
   );
 }
 
